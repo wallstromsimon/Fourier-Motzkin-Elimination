@@ -73,82 +73,76 @@ void print_ineq(int n, int m, int matrix[n][m], int v[n])
         //printf("\n");
 }
 
-void from_tast
+void sort_ineq(int rows, int cols, int A[rows][cols], int c[rows] )
 {
-	int ROWS = 4;
-	int COLS = 2; //so this wont break for now
-	int A[ROWS][COLS] = {{2,-11}, {-3,2}, {1,3}, {-2,0}};
-        int c[ROWS] = {3, -5, 4, -3};
+	//count positive and negativ
+	int n1 = 0; //#positive
+	int n2 = 0; //#positive + #negative
+	int i;
+	for(i = 0; i < rows; i++){
+					if(A[i][cols-1] > 0){
+									n1++;
+					}else if(A[i][cols-1] < 0){
+									n2++;
+					}
+	}
+	n2 += n1;
+	printf("\nn1: %d, n2: %d \n", n1, n2);
 
-        //Start by copying system in real solution?
-
-        printf("Original\n");
-        print_ineq(ROWS, COLS, A, c);
-
-        //count positive and negativ
-        int n1 = 0; //#positive
-        int n2 = 0; //#positive + #negative
-        int i;
-        for(i = 0; i < ROWS; i++){
-                if(A[i][COLS-1] > 0){
-                        n1++;
-                }else if(A[i][COLS-1] < 0){
-                        n2++;
-                }
-        }
-        n2 += n1;
-        printf("\nn1: %d, n2: %d \n", n1, n2);
-
-        //sort system according to rightmost coefficient
-        int As[ROWS][COLS];
-        int cs[COLS];
-        int smallest_row;
-        int smallest_value;
-        int j;
-        //FIXME should have COLS-iter instead of -1, or change cols each iter
-        for(i = 0; i < ROWS; i++){
-                smallest_row = INT_MAX;
-                smallest_value = INT_MAX;
-                //Might be possible to sort one value of each category per iteration
-                for (j = 0; j < ROWS; j++){
-                        if(A[j][COLS-1] < smallest_value && A[j][COLS-1] > 0 && i < n1){
-                                smallest_value = A[j][COLS-1];
-                                smallest_row = j;
-                        }else if(A[j][COLS-1] < smallest_value && A[j][COLS-1] < 0 && i >= n1){
-                                smallest_value = A[j][COLS-1];
-                                smallest_row = j;
-                        } else if(A[j][COLS-1] == 0 && i >= n2){
-                                smallest_value = A[j][COLS-1];
-                                smallest_row = j;
-                        }
-                }
-                for (j = 0; j < COLS; j++){
-                        As[i][j] = A[smallest_row][j];
-                        A[smallest_row][j] = INT_MAX;
-                        cs[i] = c[smallest_row];
-                        //c[smallest_row] = INT_MAX;
-                }
-        }
-        printf("\nSorted\n");
-        print_ineq(ROWS, COLS, As, cs);
-	//Divide by coefficient, int div...
-        // < should be > when dividing with negative
-        int coef;
-        for (i = 0; i < ROWS; i++){
-                coef = As[i][COLS-1];
-                if(coef != 0){
-                        for(j = 0; j < COLS; j++){
-                                As[i][j] = As[i][j]/coef;
-                        }
-                        cs[i] = cs[i]/coef;
-                }
-
-        }
-        printf("\nDivided\n");
-        print_ineq(ROWS, COLS, As, cs);
-
-        //Isolate x2(COLS-1(itr))
+	//sort system according to rightmost coefficient
+	int As[rows][cols];
+	int cs[cols];
+	int smallest_row;
+	int smallest_value;
+	int j;
+	//FIXME should have cols-iter instead of -1, or change cols each iter
+	for(i = 0; i < rows; i++){
+					smallest_row = INT_MAX;
+					smallest_value = INT_MAX;
+					//Might be possible to sort one value of each category per iteration
+					for (j = 0; j < rows; j++){
+									if(A[j][cols-1] < smallest_value && A[j][cols-1] > 0 && i < n1){
+													smallest_value = A[j][cols-1];
+													smallest_row = j;
+									}else if(A[j][cols-1] < smallest_value && A[j][cols-1] < 0 && i >= n1){
+													smallest_value = A[j][cols-1];
+													smallest_row = j;
+									} else if(A[j][cols-1] == 0 && i >= n2){
+													smallest_value = A[j][cols-1];
+													smallest_row = j;
+									}
+					}
+					for (j = 0; j < cols; j++){
+									As[i][j] = A[smallest_row][j];
+									A[smallest_row][j] = INT_MAX;
+									cs[i] = c[smallest_row];
+									//c[smallest_row] = INT_MAX;
+					}
+	}
+	printf("\nSorted\n");
+	print_ineq(rows, cols, As, cs);
 }
+
+void divide_by_coef(int rows, int cols, int A[rows][cols], int c[rows] )
+{
+	//Divide by coefficient, int div...
+				// < should be > when dividing with negative
+	int coef;
+	for (i = 0; i < rows; i++){
+					coef = As[i][cols-1];
+					if(coef != 0){
+									for(j = 0; j < cols; j++){
+													As[i][j] = As[i][j]/coef;
+									}
+									cs[i] = cs[i]/coef;
+					}
+
+	}
+	printf("\nDivided\n");
+	print_ineq(rows, cols, As, cs);
+	//Isolate x2(cols-1(itr))
+}
+
 
 int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
 {
@@ -159,7 +153,7 @@ int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
 	int n2;
 
 	while(1){
-		sort_ineq(a, c, &n1, &n2);
+		sort_ineq(rows,cols, a, c);
 
 		for (int i = 0; i < r; ++i){
 			for (int j = 0; i < n2; ++j){
@@ -192,7 +186,7 @@ int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
 
 	return 1;
 }
-	
+
 unsigned long long swada_fm(char* aname, char* cname, int seconds)
 {
 	FILE*		afile = fopen(aname, "r");
@@ -229,7 +223,7 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 
 	if (seconds == 0) {
 		/* Just run once for validation. */
-			
+
 		// Uncomment when your function and variables exist...
 		return fm_elim(rows, cols, a, c);
 		// return 1; // return one, i.e. has a solution for now...
