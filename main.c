@@ -4,10 +4,10 @@
  * To use it, write a function that takes two file names and a time
  * as input parameters. Since all project's function's will be put
  * in the same program, try to find a unique name, based e.g. on your
- * name or account. In the example below, the function is called name_fm.
+ * name or account. In the example below, the function is called swada_fm.
  * So, change that to something different!
  * 
- * In a separate file, called "name_fm.c", make your function complete.
+ * In a separate file, called "swada_fm.c", make your function complete.
  * That file should have one externally visible symbol, namely your 
  * Fourier-Motzkin function.
  *
@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-unsigned long long name_fm(char* aname, char* cname, int seconds);
+unsigned long long swada_fm(char* aname, char* cname, int seconds);
 
 #define ENTRY(id)	{ .name = #id, .func = id, }
 #define NAME_WIDTH	(20)
@@ -45,7 +45,7 @@ static struct fm {
 	unsigned long long	(*func)(char*, char*, int);
 	unsigned long long	count;
 } fm[] = { 
-	ENTRY(name_fm),
+	ENTRY(swada_fm),
 };
 
 static unsigned int correct[] = { 1, 0, 1, 0, 0, 0 };

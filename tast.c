@@ -5,6 +5,15 @@
 #define ROWS (4)
 #define COLS (2)
 
+typedef struct rat_t{
+	int num;
+	int den;
+}rat_t
+
+rat_t addr(rat_t a, rat_t b)
+{
+	if(
+
 //n rows, m cols
 
 void print_ineq(int n, int m, int matrix[n][m], int v[n])

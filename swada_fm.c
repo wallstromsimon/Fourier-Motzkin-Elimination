@@ -56,7 +56,7 @@ int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
 	return 1;
 }
 	
-unsigned long long name_fm(char* aname, char* cname, int seconds)
+unsigned long long swada_fm(char* aname, char* cname, int seconds)
 {
 	FILE*		afile = fopen(aname, "r");
 	FILE*		cfile = fopen(cname, "r");
