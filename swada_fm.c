@@ -9,50 +9,50 @@ static unsigned long long	fm_count;
 static volatile bool		proceed = false;
 
 typedef struct rational_t rational_t;
-struct rational_t{
-	int p;
-	int q;
+	struct rational_t{
+        int n;
+        int d;
 };
 
 void print_rational(rational_t r){
-	printf("%d/%d\n",r.p ,r.q);
+        printf("%d/%d",r.n ,r.d);
 }
 
 rational_t reduce(rational_t r){
-	int a=r.p, b=r.q, c;
- 	while (a != 0) {
-  		c = a;
-		a = b%a;
-		b = c;
- 	}
-  	r.p = r.p/b;
-	r.q = r.q/b;
-	return r;
+        int a=r.n, b=r.d, c;
+        while (a != 0) {
+                c = a;
+                a = b%a;
+                b = c;
+        }
+        r.n = r.n/b;
+        r.d = r.d/b;
+        return r;
 }
 
-rational_t addq(rational_t r1, rational_t r2){
-	rational_t r;
-  	r.p = r1.p*r2.q + r2.p*r1.q;
-	r.q = r1.q*r2.q;
-	return reduce(r);
+rational_t addd(rational_t r1, rational_t r2){
+        rational_t r;
+        r.n = r1.n*r2.d + r2.n*r1.d;
+        r.d = r1.d*r2.d;
+        return reduce(r);
 }
-rational_t subq(rational_t r1, rational_t r2){
-	rational_t r;
-  	r.p = r1.p*r2.q - r2.p*r1.q;
-	r.q = r1.q*r2.q;
-	return reduce(r);
+rational_t subd(rational_t r1, rational_t r2){
+        rational_t r;
+        r.n = r1.n*r2.d - r2.n*r1.d;
+        r.d = r1.d*r2.d;
+        return reduce(r);
 }
-rational_t mulq(rational_t r1, rational_t r2){
-	rational_t r;
-  	r.p = r1.p*r2.p;
-	r.q = r1.q*r2.q;
-	return reduce(r);
+rational_t muld(rational_t r1, rational_t r2){
+        rational_t r;
+        r.n = r1.n*r2.n;
+        r.d = r1.d*r2.d;
+        return reduce(r);
 }
-rational_t divq(rational_t r1, rational_t r2){
-	rational_t r;
-  	r.p = r1.p*r2.q;
-	r.q = r1.q*r2.p;
-	return reduce(r);
+rational_t divd(rational_t r1, rational_t r2){
+        rational_t r;
+        r.n = r1.n*r2.d;
+        r.d = r1.d*r2.n;
+        return reduce(r);
 }
 
 static void done(int unused)
@@ -61,54 +61,57 @@ static void done(int unused)
 	unused = unused;
 }
 
-void print_ineq(int n, int m, int matrix[n][m], int v[n])
+void print_ineq(int n, int m, rational_t matrix[n][m], rational_t v[n])
 {
         int i, j;
         for(i = 0; i < n; i++){
                 for(j=0; j < m; j++){
-                        printf("%d    ", matrix[i][j]);
+			print_rational(matrix[i][j]);
+                        printf("    ");
                 }
-                printf("<=    %d\n", v[i]);
+                printf("<=    \n");
+		print_rational(v[i]);
         }
         //printf("\n");
 }
 
-void sort_ineq(int rows, int cols, int A[rows][cols], int c[rows] )
+void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
 {
 	//count positive and negativ
 	int n1 = 0; //#positive
 	int n2 = 0; //#positive + #negative
-	int i;
+	int i, j;
 	for(i = 0; i < rows; i++){
-					if(A[i][cols-1] > 0){
-									n1++;
-					}else if(A[i][cols-1] < 0){
-									n2++;
-					}
+		double eval = (double)A[i][cols-1].n / A[i][cols-1].d;
+		if(eval > 0){
+			n1++;
+		}else if(eval < 0){
+			n2++;
+		}
 	}
 	n2 += n1;
 	printf("\nn1: %d, n2: %d \n", n1, n2);
 
 	//sort system according to rightmost coefficient
-	int As[rows][cols];
-	int cs[cols];
+	rational_t As[rows][cols];
+	rational_t cs[cols];
 	int smallest_row;
-	int smallest_value;
-	int j;
+	rational_t smallest_value;
 	//FIXME should have cols-iter instead of -1, or change cols each iter
 	for(i = 0; i < rows; i++){
 		smallest_row = INT_MAX;
 		smallest_value = INT_MAX;
 		//Might be possible to sort one value of each category per iteration
 		for (j = 0; j < rows; j++){
-			if(A[j][cols-1] < smallest_value && A[j][cols-1] > 0 && i < n1){
-				smallest_value = A[j][cols-1];
+			double eval = (double)A[i][cols-1].n / A[i][cols-1].d;
+			if(eval < smallest_value && eval > 0 && i < n1){
+				smallest_value = eval;
 				smallest_row = j;
-			}else if(A[j][cols-1] < smallest_value && A[j][cols-1] < 0 && i >= n1){
-				smallest_value = A[j][cols-1];
+			}else if(eval < smallest_value && eval < 0 && i >= n1){
+				smallest_value = eval;
 				smallest_row = j;
-			} else if(A[j][cols-1] == 0 && i >= n2){
-				smallest_value = A[j][cols-1];
+			} else if(eval == 0 && i >= n2){
+				smallest_value = eval;
 				smallest_row = j;
 			}
 		}
@@ -125,10 +128,11 @@ void sort_ineq(int rows, int cols, int A[rows][cols], int c[rows] )
 	print_ineq(rows, cols, A, c);
 }
 
-void divide_by_coef(int rows, int cols, int A[rows][cols], int c[rows] )
+//Contineu with rationals here!!!!!!!!!!!!!!!!!!!!!!!!!
+void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
 {
 	//Divide by coefficient, int div...
-				// < should be > when dividing with negative
+	// < should be > when dividing with negative
 	int coef;
 	int i,j;
 	for (i = 0; i < rows; i++){
