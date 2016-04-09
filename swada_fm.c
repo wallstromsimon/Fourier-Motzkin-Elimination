@@ -8,7 +8,7 @@
 static unsigned long long	fm_count;
 static volatile bool		proceed = false;
 
-ypedef struct rational_t rational_t;
+typedef struct rational_t rational_t;
 struct rational_t{
 	int p;
 	int q;
@@ -97,30 +97,32 @@ void sort_ineq(int rows, int cols, int A[rows][cols], int c[rows] )
 	int j;
 	//FIXME should have cols-iter instead of -1, or change cols each iter
 	for(i = 0; i < rows; i++){
-					smallest_row = INT_MAX;
-					smallest_value = INT_MAX;
-					//Might be possible to sort one value of each category per iteration
-					for (j = 0; j < rows; j++){
-									if(A[j][cols-1] < smallest_value && A[j][cols-1] > 0 && i < n1){
-													smallest_value = A[j][cols-1];
-													smallest_row = j;
-									}else if(A[j][cols-1] < smallest_value && A[j][cols-1] < 0 && i >= n1){
-													smallest_value = A[j][cols-1];
-													smallest_row = j;
-									} else if(A[j][cols-1] == 0 && i >= n2){
-													smallest_value = A[j][cols-1];
-													smallest_row = j;
-									}
-					}
-					for (j = 0; j < cols; j++){
-									As[i][j] = A[smallest_row][j];
-									A[smallest_row][j] = INT_MAX;
-									cs[i] = c[smallest_row];
-									//c[smallest_row] = INT_MAX;
-					}
+		smallest_row = INT_MAX;
+		smallest_value = INT_MAX;
+		//Might be possible to sort one value of each category per iteration
+		for (j = 0; j < rows; j++){
+			if(A[j][cols-1] < smallest_value && A[j][cols-1] > 0 && i < n1){
+				smallest_value = A[j][cols-1];
+				smallest_row = j;
+			}else if(A[j][cols-1] < smallest_value && A[j][cols-1] < 0 && i >= n1){
+				smallest_value = A[j][cols-1];
+				smallest_row = j;
+			} else if(A[j][cols-1] == 0 && i >= n2){
+				smallest_value = A[j][cols-1];
+				smallest_row = j;
+			}
+		}
+		for (j = 0; j < cols; j++){
+			As[i][j] = A[smallest_row][j];
+			A[smallest_row][j] = INT_MAX;
+			cs[i] = c[smallest_row];
+			//c[smallest_row] = INT_MAX;
+		}
 	}
 	printf("\nSorted\n");
-	print_ineq(rows, cols, As, cs);
+	A = As;
+	c = cs;
+	print_ineq(rows, cols, A, c);
 }
 
 void divide_by_coef(int rows, int cols, int A[rows][cols], int c[rows] )
@@ -128,25 +130,27 @@ void divide_by_coef(int rows, int cols, int A[rows][cols], int c[rows] )
 	//Divide by coefficient, int div...
 				// < should be > when dividing with negative
 	int coef;
+	int i,j;
 	for (i = 0; i < rows; i++){
-					coef = As[i][cols-1];
-					if(coef != 0){
-									for(j = 0; j < cols; j++){
-													As[i][j] = As[i][j]/coef;
-									}
-									cs[i] = cs[i]/coef;
-					}
-
+		coef = A[i][cols-1];
+		if(coef != 0){
+			for(j = 0; j < cols; j++){
+				A[i][j] = A[i][j]/coef;
+			}
+			c[i] = c[i]/coef;
+		}
 	}
 	printf("\nDivided\n");
-	print_ineq(rows, cols, As, cs);
+	print_ineq(rows, cols, A, c);
 	//Isolate x2(cols-1(itr))
 }
 
 
 int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
 {
-	int b[rows][cols];
+	sort_ineq(rows,cols, a, c);
+	divide_by_coef(rows,cols, a, c);
+	/*int b[rows][cols];
 	int B[rows][cols];
 
 	int n1;
@@ -181,7 +185,7 @@ int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
 		}
 
 
-	}
+	}*/
 
 
 	return 1;
@@ -204,22 +208,32 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 		exit(1);
 	}
 	int rows,cols,i,j,c_col;
-	fscanf(afile,"%d",&rows);
-	fscanf(afile,"%d",&cols);
+	if(fscanf(afile,"%d",&rows) != 1 || fscanf(afile,"%d",&cols) != 1){
+		fprintf(stderr, "could not read from file\n");
+	}
 	int a[rows][cols];
 	for(i = 0; i<rows; ++i){
 		for(j = 0; j<cols; ++j){
-			fscanf(afile,"%d",&a[i][j]);
+			if(fscanf(afile,"%d",&a[i][j]) != 1){
+				fprintf(stderr, "could not read from file\n");
+			}
 		}
 	}
-	fscanf(cfile,"%d",&c_col);
+	if(fscanf(cfile,"%d",&c_col) != 1){
+		fprintf(stderr, "could not read from file\n");
+	}
 	int c[c_col];
-	for(i = 0; i <c_col;++i)
-			fscanf(cfile,"%d",&c[i]);
-	/* read A and c files. */
+	for(i = 0; i <c_col;++i){
+		if(fscanf(cfile,"%d",&c[i]) != 1){
+			fprintf(stderr, "could not read from file\n");
+		}
+	}
 
 	fclose(afile);
 	fclose(cfile);
+
+	printf("\n\n\n\n------------------\n\n\n\nStarting new test of size %d x %d\n", rows,cols);
+	print_ineq(rows,cols,a,c);
 
 	if (seconds == 0) {
 		/* Just run once for validation. */
