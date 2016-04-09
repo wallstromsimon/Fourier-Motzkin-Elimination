@@ -8,6 +8,53 @@
 static unsigned long long	fm_count;
 static volatile bool		proceed = false;
 
+ypedef struct rational_t rational_t;
+struct rational_t{
+	int p;
+	int q;
+};
+
+void print_rational(rational_t r){
+	printf("%d/%d\n",r.p ,r.q);
+}
+
+rational_t reduce(rational_t r){
+	int a=r.p, b=r.q, c;
+ 	while (a != 0) {
+  		c = a;
+		a = b%a;
+		b = c;
+ 	}
+  	r.p = r.p/b;
+	r.q = r.q/b;
+	return r;
+}
+
+rational_t addq(rational_t r1, rational_t r2){
+	rational_t r;
+  	r.p = r1.p*r2.q + r2.p*r1.q;
+	r.q = r1.q*r2.q;
+	return reduce(r);
+}
+rational_t subq(rational_t r1, rational_t r2){
+	rational_t r;
+  	r.p = r1.p*r2.q - r2.p*r1.q;
+	r.q = r1.q*r2.q;
+	return reduce(r);
+}
+rational_t mulq(rational_t r1, rational_t r2){
+	rational_t r;
+  	r.p = r1.p*r2.p;
+	r.q = r1.q*r2.q;
+	return reduce(r);
+}
+rational_t divq(rational_t r1, rational_t r2){
+	rational_t r;
+  	r.p = r1.p*r2.q;
+	r.q = r1.q*r2.p;
+	return reduce(r);
+}
+
 static void done(int unused)
 {
 	proceed = false;
