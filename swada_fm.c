@@ -60,20 +60,21 @@ rational_t divd(rational_t r1, rational_t r2){
 	r.d = r1.d*r2.n;
 	return reduce(r);
 }
+
+double rtod(rational_t r1)
+{
+	return (double)r1.n/r1.d;
+}
+
 int lessd(rational_t r1, rational_t r2){
-	int a = r1.n * r2.d;
-	int b = r2.n * r1.d;
-	return a < b;
+
+	return rtod(r1) < rtod(r2);
 }
 int greatd(rational_t r1, rational_t r2){
-	int a = r1.n * r2.d;
-	int b = r2.n * r1.d;
-	return a > b;
+	return rtod(r1) > rtod(r2);
 }
 int equald(rational_t r1, rational_t r2){
-	int a = r1.n * r2.d;
-	int b = r2.n * r1.d;
-	return a == b;
+	return rtod(r1) == rtod(r2);
 }
 
 static void done(int unused)
@@ -120,13 +121,15 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 	rational_t zero = {.n=0, .d=1};
 	rational_t smallest_value;
 	for(i = 0; i < rows; i++){
+		printf("outer loop\n");
 		smallest_row = INT_MAX;
 		smallest_value.n = INT_MAX;
 		smallest_value.d = 1;
 
 		//Might be possible to sort one value of each category per iteration
 		for (j = 0; j < rows; j++){
-			rational_t eval = A[i][cols-1];
+			printf("inner loop\n");
+			rational_t eval = A[j][cols-1];
 			if(lessd(eval,smallest_value) && greatd(eval,zero) && i < n1){
 				smallest_value = eval;
 				smallest_row = j;
@@ -139,6 +142,7 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 			}
 		}
 		for (j = 0; j < cols; j++){
+			printf("inner loop 2, smallest_row: %d\n", smallest_row);
 			As[i][j] = A[smallest_row][j];
 			A[smallest_row][j].n = INT_MAX;
 			A[smallest_row][j].d = 1;			
@@ -147,8 +151,12 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 		}
 	}
 	printf("\nSorted\n");
-	A = As;
-	c = cs;
+	for (int i = 0; i < rows; ++i){
+		for (int j = 0; j < cols; ++j){
+			A[i][j] = As[i][j];
+		}
+		c[i] = cs[i];
+	}
 	print_ineq(rows, cols, A, c);
 }
 
@@ -175,7 +183,7 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 
 int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
-	//sort_ineq(rows,cols, a, c);
+	sort_ineq(rows,cols, a, c);
 	divide_by_coef(rows,cols, a, c);
 	/*int b[rows][cols];
 	  int B[rows][cols];

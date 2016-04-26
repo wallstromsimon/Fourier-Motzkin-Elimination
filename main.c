@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 
 		pass = 0;
 
-		for (j = 0; j < ntest; ++j) {
+		for (j = 0; j < 1; ++j) { //< ntest
 			snprintf(a, sizeof a, "input/%zu/A", j);
 			snprintf(c, sizeof c, "input/%zu/c", j);
 
