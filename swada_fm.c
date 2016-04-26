@@ -18,6 +18,8 @@ void print_rational(rational_t r){
 	printf("%d/%d",r.n ,r.d);
 }
 
+rational_t muld(rational_t,rational_t);
+
 rational_t reduce(rational_t r){
 	int a=r.n, b=r.d, c;
 	while (a != 0) {
@@ -25,8 +27,12 @@ rational_t reduce(rational_t r){
 		a = b%a;
 		b = c;
 	}
+	b = b < 0 ? b * (-1) : b;
 	r.n = r.n/b;
 	r.d = r.d/b;
+	if(r.d < 0){
+		r = muld(r, (rational_t){-1,-1});
+	}
 	return r;
 }
 
@@ -88,7 +94,6 @@ void print_ineq(int n, int m, rational_t matrix[n][m], rational_t v[n])
 		print_rational(v[i]);
 		printf("\n");
 	}
-	//printf("\n");
 }
 
 void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
@@ -165,13 +170,12 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 	}
 	printf("\nDivided\n");
 	print_ineq(rows, cols, A, c);
-	//Isolate x2(cols-1(itr))
 }
 
 
 int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
-	sort_ineq(rows,cols, a, c);
+	//sort_ineq(rows,cols, a, c);
 	divide_by_coef(rows,cols, a, c);
 	/*int b[rows][cols];
 	  int B[rows][cols];
