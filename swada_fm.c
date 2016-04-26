@@ -84,8 +84,9 @@ void print_ineq(int n, int m, rational_t matrix[n][m], rational_t v[n])
 			print_rational(matrix[i][j]);
 			printf("    ");
 		}
-		printf("<=    \n");
+		printf("<=    ");
 		print_rational(v[i]);
+		printf("\n");
 	}
 	//printf("\n");
 }
@@ -168,7 +169,7 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 }
 
 
-int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
+int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
 	sort_ineq(rows,cols, a, c);
 	divide_by_coef(rows,cols, a, c);
@@ -233,21 +234,25 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 	if(fscanf(afile,"%d",&rows) != 1 || fscanf(afile,"%d",&cols) != 1){
 		fprintf(stderr, "could not read from file\n");
 	}
-	int a[rows][cols];
+	rational_t a[rows][cols];
 	for(i = 0; i<rows; ++i){
 		for(j = 0; j<cols; ++j){
-			if(fscanf(afile,"%d",&a[i][j]) != 1){
+			if(fscanf(afile,"%d",&(a[i][j].n)) != 1){
 				fprintf(stderr, "could not read from file\n");
+			}else{
+				a[i][j].d = 1;
 			}
 		}
 	}
 	if(fscanf(cfile,"%d",&c_col) != 1){
 		fprintf(stderr, "could not read from file\n");
 	}
-	int c[c_col];
+	rational_t c[c_col];
 	for(i = 0; i <c_col;++i){
-		if(fscanf(cfile,"%d",&c[i]) != 1){
+		if(fscanf(cfile,"%d",&(c[i].n)) != 1){
 			fprintf(stderr, "could not read from file\n");
+		}else{
+			c[i].d = 1;
 		}
 	}
 
