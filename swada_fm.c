@@ -54,6 +54,21 @@ rational_t divd(rational_t r1, rational_t r2){
 	r.d = r1.d*r2.n;
 	return reduce(r);
 }
+rational_t lessd(rational_t r1, rational_t r2){
+	int a = r1.n * r2.d;
+	int b = r2.n * r1.d;
+	return a < b;
+}
+rational_t greatd(rational_t r1, rational_t r2){
+	int a = r1.n * r2.d;
+	int b = r2.n * r1.d;
+	return a > b;
+}
+rational_t equald(rational_t r1, rational_t r2){
+	int a = r1.n * r2.d;
+	int b = r2.n * r1.d;
+	return a == b;
+}
 
 static void done(int unused)
 {
@@ -96,13 +111,14 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 	rational_t As[rows][cols];
 	rational_t cs[cols];
 	int smallest_row;
-	rational_t smallest_value;
+	double smallest_value;
 	for(i = 0; i < rows; i++){
 		smallest_row = INT_MAX;
 		smallest_value = INT_MAX;
 		//Might be possible to sort one value of each category per iteration
 		for (j = 0; j < rows; j++){
 			double eval = (double)A[i][cols-1].n / A[i][cols-1].d;
+			smallest_value =  
 			if(eval < smallest_value && eval > 0 && i < n1){
 				smallest_value = eval;
 				smallest_row = j;
@@ -115,8 +131,9 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 			}
 		}
 		for (j = 0; j < cols; j++){
-			As[i][j] = A[smallest_row][j];
-			A[smallest_row][j] = INT_MAX;
+			As[i][j] = A[smallest_row][j]
+			A[smallest_row][j].n = INT_MAX;
+			A[smallest_row][j].d = 1;			
 			cs[i] = c[smallest_row];
 			//c[smallest_row] = INT_MAX;
 		}
