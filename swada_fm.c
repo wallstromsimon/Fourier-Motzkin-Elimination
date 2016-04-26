@@ -132,15 +132,15 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 {
 	//Divide by coefficient, int div...
 	// < should be > when dividing with negative
-	int coef;
+	rational_t coef;
 	int i,j;
 	for (i = 0; i < rows; i++){
 		coef = A[i][cols-1];
-		if(coef != 0){
+		if(coef.n != 0){
 			for(j = 0; j < cols; j++){
-				A[i][j] = A[i][j]/coef;
+				A[i][j] = divd(A[i][j], coef);
 			}
-			c[i] = c[i]/coef;
+			c[i] = divd(c[i], coef);
 		}
 	}
 	printf("\nDivided\n");
