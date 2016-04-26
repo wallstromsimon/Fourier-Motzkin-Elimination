@@ -185,41 +185,40 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
 	sort_ineq(rows,cols, a, c);
 	divide_by_coef(rows,cols, a, c);
-	/*int b[rows][cols];
-	  int B[rows][cols];
+	/*
+	int b[rows][cols];
+	int B[rows][cols];
 
-	  int n1;
-	  int n2;
+	int n1;
+	int n2;
 
-	  while(1){
-	  sort_ineq(rows,cols, a, c);
+	while(1){
+		sort_ineq(rows,cols, a, c);
 
-	  for (int i = 0; i < r; ++i){
-	  for (int j = 0; i < n2; ++j){
-	  T[i][j] = T[i][j] / T[i][m-1];
-	  }
-	  }
+		for (int i = 0; i < r; ++i){
+		  	for (int j = 0; i < n2; ++j){
+				T[i][j] = T[i][j] / T[i][m-1];
+		  	}
+		}
 
-	  for (int j = 0; i < n2; ++j){
-	  q[j] = q[j]/T[i][m-1];
-	  }
+		for (int j = 0; i < n2; ++j){
+			q[j] = q[j]/T[i][m-1];
+		}
 
-	  if (n2 > n1){
-	//max
-	}else{
-	//-inf
-	}
-	if(n1 > 0){
-	//min
-	}else{
-	//inf
-	}
+		if (n2 > n1){
+		//max
+		}else{
+		//-inf
+		}
+		if(n1 > 0){
+		//min
+		}else{
+		//inf
+		}
 
-	if(cols == 1){
-	//return make solution
-	}
-
-
+		if(cols == 1){
+		//return make solution
+		}
 	}*/
 
 
