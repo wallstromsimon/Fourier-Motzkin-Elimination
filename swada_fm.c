@@ -9,50 +9,50 @@ static unsigned long long	fm_count;
 static volatile bool		proceed = false;
 
 typedef struct rational_t rational_t;
-	struct rational_t{
-        int n;
-        int d;
+struct rational_t{
+	int n;
+	int d;
 };
 
 void print_rational(rational_t r){
-        printf("%d/%d",r.n ,r.d);
+	printf("%d/%d",r.n ,r.d);
 }
 
 rational_t reduce(rational_t r){
-        int a=r.n, b=r.d, c;
-        while (a != 0) {
-                c = a;
-                a = b%a;
-                b = c;
-        }
-        r.n = r.n/b;
-        r.d = r.d/b;
-        return r;
+	int a=r.n, b=r.d, c;
+	while (a != 0) {
+		c = a;
+		a = b%a;
+		b = c;
+	}
+	r.n = r.n/b;
+	r.d = r.d/b;
+	return r;
 }
 
 rational_t addd(rational_t r1, rational_t r2){
-        rational_t r;
-        r.n = r1.n*r2.d + r2.n*r1.d;
-        r.d = r1.d*r2.d;
-        return reduce(r);
+	rational_t r;
+	r.n = r1.n*r2.d + r2.n*r1.d;
+	r.d = r1.d*r2.d;
+	return reduce(r);
 }
 rational_t subd(rational_t r1, rational_t r2){
-        rational_t r;
-        r.n = r1.n*r2.d - r2.n*r1.d;
-        r.d = r1.d*r2.d;
-        return reduce(r);
+	rational_t r;
+	r.n = r1.n*r2.d - r2.n*r1.d;
+	r.d = r1.d*r2.d;
+	return reduce(r);
 }
 rational_t muld(rational_t r1, rational_t r2){
-        rational_t r;
-        r.n = r1.n*r2.n;
-        r.d = r1.d*r2.d;
-        return reduce(r);
+	rational_t r;
+	r.n = r1.n*r2.n;
+	r.d = r1.d*r2.d;
+	return reduce(r);
 }
 rational_t divd(rational_t r1, rational_t r2){
-        rational_t r;
-        r.n = r1.n*r2.d;
-        r.d = r1.d*r2.n;
-        return reduce(r);
+	rational_t r;
+	r.n = r1.n*r2.d;
+	r.d = r1.d*r2.n;
+	return reduce(r);
 }
 
 static void done(int unused)
@@ -63,16 +63,16 @@ static void done(int unused)
 
 void print_ineq(int n, int m, rational_t matrix[n][m], rational_t v[n])
 {
-        int i, j;
-        for(i = 0; i < n; i++){
-                for(j=0; j < m; j++){
+	int i, j;
+	for(i = 0; i < n; i++){
+		for(j=0; j < m; j++){
 			print_rational(matrix[i][j]);
-                        printf("    ");
-                }
-                printf("<=    \n");
+			printf("    ");
+		}
+		printf("<=    \n");
 		print_rational(v[i]);
-        }
-        //printf("\n");
+	}
+	//printf("\n");
 }
 
 void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
@@ -97,7 +97,6 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 	rational_t cs[cols];
 	int smallest_row;
 	rational_t smallest_value;
-	//FIXME should have cols-iter instead of -1, or change cols each iter
 	for(i = 0; i < rows; i++){
 		smallest_row = INT_MAX;
 		smallest_value = INT_MAX;
@@ -155,38 +154,38 @@ int fm_elim(int rows, int cols, int a[rows][cols], int c[rows])
 	sort_ineq(rows,cols, a, c);
 	divide_by_coef(rows,cols, a, c);
 	/*int b[rows][cols];
-	int B[rows][cols];
+	  int B[rows][cols];
 
-	int n1;
-	int n2;
+	  int n1;
+	  int n2;
 
-	while(1){
-		sort_ineq(rows,cols, a, c);
+	  while(1){
+	  sort_ineq(rows,cols, a, c);
 
-		for (int i = 0; i < r; ++i){
-			for (int j = 0; i < n2; ++j){
-				T[i][j] = T[i][j] / T[i][m-1];
-			}
-		}
+	  for (int i = 0; i < r; ++i){
+	  for (int j = 0; i < n2; ++j){
+	  T[i][j] = T[i][j] / T[i][m-1];
+	  }
+	  }
 
-		for (int j = 0; i < n2; ++j){
-			q[j] = q[j]/T[i][m-1];
-		}
+	  for (int j = 0; i < n2; ++j){
+	  q[j] = q[j]/T[i][m-1];
+	  }
 
-		if (n2 > n1){
-			//max
-		}else{
-			//-inf
-		}
-		if(n1 > 0){
-			//min
-		}else{
-			//inf
-		}
+	  if (n2 > n1){
+	//max
+	}else{
+	//-inf
+	}
+	if(n1 > 0){
+	//min
+	}else{
+	//inf
+	}
 
-		if(cols == 1){
-			//return make solution
-		}
+	if(cols == 1){
+	//return make solution
+	}
 
 
 	}*/
