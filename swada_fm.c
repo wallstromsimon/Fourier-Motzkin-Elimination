@@ -121,14 +121,12 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 	rational_t zero = {.n=0, .d=1};
 	rational_t smallest_value;
 	for(i = 0; i < rows; i++){
-		printf("outer loop\n");
 		smallest_row = INT_MAX;
 		smallest_value.n = INT_MAX;
 		smallest_value.d = 1;
 
 		//Might be possible to sort one value of each category per iteration
 		for (j = 0; j < rows; j++){
-			printf("inner loop\n");
 			rational_t eval = A[j][cols-1];
 			if(lessd(eval,smallest_value) && greatd(eval,zero) && i < n1){
 				smallest_value = eval;
@@ -142,7 +140,6 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 			}
 		}
 		for (j = 0; j < cols; j++){
-			printf("inner loop 2, smallest_row: %d\n", smallest_row);
 			As[i][j] = A[smallest_row][j];
 			A[smallest_row][j].n = INT_MAX;
 			A[smallest_row][j].d = 1;			
