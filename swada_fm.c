@@ -164,7 +164,7 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 	int i,j;
 	for (i = 0; i < rows; i++){
 		coef = A[i][cols-1];
-		coef.n = coef.n < 0 ? coef.n * -1 : coef.n;
+		coef.n = coef.n < 0 ? coef.n * -1 : coef.n; // Keeps track of < >, with + - 
 		if(coef.n != 0){
 			for(j = 0; j < cols; j++){
 				A[i][j] = divd(A[i][j], coef);
@@ -181,6 +181,7 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
 	sort_ineq(rows,cols, a, c);
 	divide_by_coef(rows,cols, a, c);
+	
 	/*
 	int b[rows][cols];
 	int B[rows][cols];
