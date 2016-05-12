@@ -157,15 +157,14 @@ void sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] 
 	print_ineq(rows, cols, A, c);
 }
 
-//Contineu with rationals here!!!!!!!!!!!!!!!!!!!!!!!!!
 void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
 {
-	//Divide by coefficient, int div...
 	// < should be > when dividing with negative
 	rational_t coef;
 	int i,j;
 	for (i = 0; i < rows; i++){
 		coef = A[i][cols-1];
+		coef.n = coef.n < 0 ? coef.n * -1 : coef.n;
 		if(coef.n != 0){
 			for(j = 0; j < cols; j++){
 				A[i][j] = divd(A[i][j], coef);
