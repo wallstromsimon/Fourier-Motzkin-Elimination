@@ -13,6 +13,15 @@ typedef struct rational_t rational_t;
 struct rational_t{
 	int n;
 	int d;
+	int pos;
+	rational_t* succ;
+	rational_t* prev;
+};
+
+typedef struct ineq_t ineq_t;
+struct ineq_t{
+	rational_t* g;
+	rational_t* l;
 };
 
 void print_rational(rational_t r){
@@ -32,7 +41,7 @@ rational_t reduce(rational_t r){
 	r.n = r.n/b;
 	r.d = r.d/b;
 	if(r.d < 0){
-		r = muld(r, (rational_t){-1,-1});
+		r = muld(r, (rational_t){-1,-1, -1, NULL, NULL});
 	}
 	return r;
 }
