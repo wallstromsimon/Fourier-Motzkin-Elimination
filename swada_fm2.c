@@ -22,6 +22,8 @@ typedef struct ineq_t ineq_t;
 struct ineq_t{
 	rational_t* g;
 	rational_t* l;
+	ineq_t* succ;
+	ineq_t* prev;
 };
 
 void print_rational(rational_t r){
@@ -188,7 +190,7 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 	print_ineq(rows, cols, A, c);
 }
 
-void find_max(int rows, rational_t c[rows], rational_t* br, int n1, int n2)
+/*void find_max(int rows, rational_t c[rows], rational_t* br, int n1, int n2)
 {
 	*br = (rational_t){INT_MIN, 1};
 
@@ -206,7 +208,6 @@ void find_max(int rows, rational_t c[rows], rational_t* br, int n1, int n2)
 		if (max_set)
 			*br = max_rational;
 	}
-
 }
 
 void find_min(int rows, rational_t c[rows], rational_t* Br, int n1)
@@ -229,6 +230,7 @@ void find_min(int rows, rational_t c[rows], rational_t* Br, int n1)
 			*Br = min_rational;
 	}
 }
+*/
 
 int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
@@ -236,7 +238,7 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 	sort_ineq(rows,cols, a, c, &n1, &n2);
 	divide_by_coef(rows,cols, a, c);
 
-	
+	/*
 	rational_t br;
 	find_max(rows, c, &br, n1, n2);
 	print_rational(br);
@@ -245,7 +247,7 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 	find_min(rows, c, &Br, n1);
 	print_rational(Br);
 	printf("\n");
-
+	*/
 	
 	/*
 	int b[rows][cols];
@@ -280,7 +282,7 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 	return 1;
 }
 
-unsigned long long swada_fm(char* aname, char* cname, int seconds)
+unsigned long long swada_fm2(char* aname, char* cname, int seconds)
 {
 	FILE*		afile = fopen(aname, "r");
 	FILE*		cfile = fopen(cname, "r");

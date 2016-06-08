@@ -7,12 +7,12 @@ CFLAGS	= -O3 -g -Wall -Wextra -Werror -std=c99
 
 CC	= gcc
 OUT	= fm
-OBJS	= main.o swada_fm.o
+OBJS	= main.o swada_fm2.o
 
 all: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(OUT)
 	./fm
-	size swada_fm.o
+	size swada_fm2.o
 
 clean:
 	rm -f $(OUT) $(OBJS)
