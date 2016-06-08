@@ -224,6 +224,7 @@ void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 
 int get_solution(int s, rational_t c[s], int n2, rational_t b, rational_t B) 
 {
+
 	if (rtod(b) > rtod(B))
 		return false;
 
@@ -232,7 +233,6 @@ int get_solution(int s, rational_t c[s], int n2, rational_t b, rational_t B)
 			return false;
 	return true;
 }
-
 
 int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
