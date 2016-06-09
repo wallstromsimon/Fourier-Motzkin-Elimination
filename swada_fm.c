@@ -67,26 +67,13 @@ double rtod(rational_t r1)
 	return (double)r1.n/r1.d;
 }
 
-int lessd(rational_t r1, rational_t r2)
-{
-	return rtod(r1) < rtod(r2);
-}
-int greatd(rational_t r1, rational_t r2)
-{
-	return rtod(r1) > rtod(r2);
-}
-int equald(rational_t r1, rational_t r2)
-{
-	return rtod(r1) == rtod(r2);
-}
-
 static void done(int unused)
 {
 	proceed = false;
 	unused = unused;
 }
 
-rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
+rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows])
 {
 	//count positive and negativ
 	int n1 = 0; //#positive
@@ -105,35 +92,33 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 	//sort system according to rightmost coefficient
 	rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
 	rational_t *cs = alloca(cols*sizeof(rational_t));
-	int smallest_row;
-	rational_t zero = {.n=0, .d=1};
-	rational_t smallest_value;
+	
+	int ppos = 0;
+	int npos = n1;
+	int zpos = n2;
 	for(i = 0; i < rows; i++){
-		smallest_row = INT_MAX;
-		smallest_value.n = INT_MAX;
-		smallest_value.d = 1;
-
-		//Might be possible to sort one value of each category per iteration
-		for (j = 0; j < rows; j++){
-			rational_t eval = A[j][cols-1];
-			if(lessd(eval,smallest_value) && greatd(eval,zero) && i < n1){
-				smallest_value = eval;
-				smallest_row = j;
-			}else if(lessd(eval,smallest_value) && lessd(eval,zero) && i >= n1){
-				smallest_value = eval;
-				smallest_row = j;
-			} else if(equald(eval,zero) && i >= n2){
-				smallest_value = eval;
-				smallest_row = j;
+		double eval = rtod(A[i][cols-1]);
+		if(eval > 0){//greatd(eval,zero)){
+			for (j = 0; j < cols; j++){
+				As[ppos][j] = A[i][j];
 			}
-		}
-		for (j = 0; j < cols; j++){
-			As[i][j] = A[smallest_row][j];
-			A[smallest_row][j].n = INT_MAX;
-			A[smallest_row][j].d = 1;			
-			cs[i] = c[smallest_row];
+			cs[ppos] = c[i];
+			ppos++;
+		}else if(eval < 0){//lessd(eval,zero)){
+			for (j = 0; j < cols; j++){
+				As[npos][j] = A[i][j];
+			}
+			cs[npos] = c[i];
+			npos++;
+		}else if(eval == 0){//equald(eval,zero)){
+			for (j = 0; j < cols; j++){
+				As[zpos][j] = A[i][j];
+			}
+			cs[zpos] = c[i];
+			zpos++;
 		}
 	}
+
 	for (int i = 0; i < rows; ++i){
 		for (int j = 0; j < cols; ++j){
 			A[i][j] = As[i][j];
