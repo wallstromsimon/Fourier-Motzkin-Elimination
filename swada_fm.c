@@ -227,20 +227,20 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 		rational_t *q_next = alloca(s_prime * sizeof(rational_t));
 		int current_row = 0;
 		
-		for (int k = 1; k <= n1; k++) {
-			for (int l = n1 + 1; l <= n2; l++) {
-				for (int i = 1; i < r; i++) {
-					U[current_row][i-1] = subd(T[k-1][i-1], T[l-1][i-1]);
+		for (int k = 0; k < n1; k++) {
+			for (int l = n1; l < n2; l++) {
+				for (int i = 0; i < r-1; i++) {
+					U[current_row][i] = subd(T[k][i], T[l][i]);
 				}
-				q_next[current_row++] = subd(q[k-1], q[l-1]);
+				q_next[current_row++] = subd(q[k], q[l]);
 			}
 		}
 
-		for (int j = n2 + 1; j <= s; j++) {
-			for (int i = 1; i < r; i++) {
-				U[current_row][i-1] = T[j-1][i-1];
+		for (int j = n2; j < s; j++) {
+			for (int i = 0; i < r-1; i++) {
+				U[current_row][i] = T[j][i];
 			}
-			q_next[current_row++] = q[j-1];
+			q_next[current_row++] = q[j];
 		}
 
 		next_matrix_ptr = (void *)U;
