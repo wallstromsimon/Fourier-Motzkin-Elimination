@@ -17,40 +17,10 @@ struct rational_t{
 	int d;
 };
 
-rational_t reduce(rational_t r)
-{
-	int a=r.n, b=r.d, c;
-	while (a != 0) {
-		c = a;
-		a = b%a;
-		b = c;
-	}
-	b = b < 0 ? b * (-1) : b;
-	r.n = r.n/b;
-	r.d = r.d/b;
-
-	return r;
-}
-
-//skip reduce to significantly lower text size
-rational_t addd(rational_t r1, rational_t r2)
-{
-	rational_t r;
-	r.n = r1.n*r2.d + r2.n*r1.d;
-	r.d = r1.d*r2.d;
-	return r;
-}
 rational_t subd(rational_t r1, rational_t r2)
 {
 	rational_t r;
 	r.n = r1.n*r2.d - r2.n*r1.d;
-	r.d = r1.d*r2.d;
-	return r;
-}
-rational_t muld(rational_t r1, rational_t r2)
-{
-	rational_t r;
-	r.n = r1.n*r2.n;
 	r.d = r1.d*r2.d;
 	return r;
 }
@@ -59,7 +29,7 @@ rational_t divd(rational_t r1, rational_t r2)
 	rational_t r;
 	r.n = r1.n*r2.d;
 	r.d = r1.d*r2.n;
-	return reduce(r);
+	return r;
 }
 
 double rtod(rational_t r1)
@@ -98,19 +68,19 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 	int zpos = n2;
 	for(i = 0; i < rows; i++){
 		double eval = rtod(A[i][cols-1]);
-		if(eval > 0){//greatd(eval,zero)){
+		if(eval > 0){
 			for (j = 0; j < cols; j++){
 				As[ppos][j] = A[i][j];
 			}
 			cs[ppos] = c[i];
 			ppos++;
-		}else if(eval < 0){//lessd(eval,zero)){
+		}else if(eval < 0){
 			for (j = 0; j < cols; j++){
 				As[npos][j] = A[i][j];
 			}
 			cs[npos] = c[i];
 			npos++;
-		}else if(eval == 0){//equald(eval,zero)){
+		}else{
 			for (j = 0; j < cols; j++){
 				As[zpos][j] = A[i][j];
 			}
@@ -128,7 +98,7 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 	return (rational_t){n1,n2};
 }
 
-void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
+void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[rows])
 {
 	rational_t coef;
 	int i,j;
