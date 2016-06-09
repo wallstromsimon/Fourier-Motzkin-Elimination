@@ -17,8 +17,6 @@ struct rational_t{
 	int d;
 };
 
-rational_t muld(rational_t,rational_t);
-
 rational_t reduce(rational_t r)
 {
 	int a=r.n, b=r.d, c;
@@ -30,9 +28,7 @@ rational_t reduce(rational_t r)
 	b = b < 0 ? b * (-1) : b;
 	r.n = r.n/b;
 	r.d = r.d/b;
-	if(r.d < 0){
-		r = muld(r, (rational_t){-1,-1});
-	}
+
 	return r;
 }
 
@@ -42,21 +38,21 @@ rational_t addd(rational_t r1, rational_t r2)
 	rational_t r;
 	r.n = r1.n*r2.d + r2.n*r1.d;
 	r.d = r1.d*r2.d;
-	return reduce(r);
+	return r;
 }
 rational_t subd(rational_t r1, rational_t r2)
 {
 	rational_t r;
 	r.n = r1.n*r2.d - r2.n*r1.d;
 	r.d = r1.d*r2.d;
-	return reduce(r);
+	return r;
 }
 rational_t muld(rational_t r1, rational_t r2)
 {
 	rational_t r;
 	r.n = r1.n*r2.n;
 	r.d = r1.d*r2.d;
-	return reduce(r);
+	return r;
 }
 rational_t divd(rational_t r1, rational_t r2)
 {
@@ -105,7 +101,7 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 		}
 	}
 	n2 += n1;
-
+	
 	//sort system according to rightmost coefficient
 	rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
 	rational_t *cs = alloca(cols*sizeof(rational_t));
@@ -226,17 +222,9 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 	rational_t br;
 	rational_t Br;
 
-	rational_t (*start_matrix)[r] = alloca(s * r * sizeof(rational_t));
 
-	rational_t *q = alloca(s * sizeof(rational_t));
-
-	for (int i = 0; i < s; ++i) {
-		for (int j = 0; j < r; ++j)
-			start_matrix[i][j] = (rational_t){a[i][j].n, 1};
-		q[i] = (rational_t){c[i].n, 1};
-	}
-
-	void *next_matrix_ptr = (void*)start_matrix;
+	rational_t *q = c;
+	void *next_matrix_ptr = a;
 
 	while(1){
 		rational_t (*T)[r] = next_matrix_ptr;
