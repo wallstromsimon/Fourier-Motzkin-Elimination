@@ -119,7 +119,7 @@ void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 	*Br = (rational_t){INT_MAX, 1};
 
 	if (n2 > n1) {
-		double max_value = -DBL_MAX;
+		double max_value = -INT_MAX;
 		for (int j = n1; j < n2; ++j) {
 			if (rtod(q[j]) > max_value) {
 				max_value = rtod(q[j]);
@@ -129,7 +129,7 @@ void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 	}
 
 	if (n1 > 0) {
-		double min_value = DBL_MAX;
+		double min_value = INT_MAX;
 		for (int j = 0; j < n1; ++j) {
 			if (rtod(q[j]) < min_value) {
 				min_value = rtod(q[j]);
