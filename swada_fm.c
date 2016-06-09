@@ -4,7 +4,6 @@
 #include <signal.h>
 #include <unistd.h>
 #include <limits.h>
-#include <float.h>
 #include <alloca.h>
 
 
@@ -17,22 +16,16 @@ struct rational_t{
 	int d;
 };
 
-rational_t subd(rational_t r1, rational_t r2)
+inline rational_t subd(rational_t r1, rational_t r2)
 {
-	rational_t r;
-	r.n = r1.n*r2.d - r2.n*r1.d;
-	r.d = r1.d*r2.d;
-	return r;
+	return (rational_t){r1.n*r2.d - r2.n*r1.d, r1.d*r2.d};
 }
-rational_t divd(rational_t r1, rational_t r2)
+inline rational_t divd(rational_t r1, rational_t r2)
 {
-	rational_t r;
-	r.n = r1.n*r2.d;
-	r.d = r1.d*r2.n;
-	return r;
+	return (rational_t){r1.n*r2.d, r1.d*r2.n};
 }
 
-double rtod(rational_t r1)
+inline double rtod(rational_t r1)
 {
 	return (double)r1.n/r1.d;
 }
