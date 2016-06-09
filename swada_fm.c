@@ -107,7 +107,7 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 	int n2 = 0; //#positive + #negative
 	int i, j;
 	for(i = 0; i < rows; i++){
-		double eval = (double)A[i][cols-1].n / A[i][cols-1].d;
+		double eval = rtod(A[i][cols-1]);
 		if(eval > 0){
 			n1++;
 		}else if(eval < 0){
@@ -115,7 +115,7 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 		}
 	}
 	n2 += n1;
-	printf("\nn1: %d, n2: %d \n", n1, n2);
+	//printf("\nn1: %d, n2: %d \n", n1, n2);
 
 	//sort system according to rightmost coefficient
 	rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
@@ -147,18 +147,16 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 			A[smallest_row][j].n = INT_MAX;
 			A[smallest_row][j].d = 1;			
 			cs[i] = c[smallest_row];
-			//c[smallest_row].n = INT_MAX;
-			//c[smallest_row].d = 1;
 		}
 	}
-	printf("\nSorted\n");
+	//printf("\nSorted\n");
 	for (int i = 0; i < rows; ++i){
 		for (int j = 0; j < cols; ++j){
 			A[i][j] = As[i][j];
 		}
 		c[i] = cs[i];
 	}
-	print_ineq(rows, cols, A, c);
+	//print_ineq(rows, cols, A, c);
 	return (rational_t){n1,n2};
 }
 
@@ -177,8 +175,8 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 			c[i] = divd(c[i], coef);
 		}
 	}
-	printf("\nDivided\n");
-	print_ineq(rows, cols, A, c);
+	//printf("\nDivided\n");
+	//print_ineq(rows, cols, A, c);
 }
 
 void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
@@ -257,20 +255,25 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 		rational_t (*T)[r] = next_matrix_ptr;
 
 		rational_t n = sort_ineq(s,r, T, q);
-		divide_by_coef(s,r, T, q);
+		n1 = n.n;
+		n2 = n.d;
+
+		divide_by_coef(n2,r, T, q);
 
 		n1 = n.n;
 		n2 = n.d;
 
-		if(r == 1){
-			rational_t br;
-			rational_t Br;
+		rational_t br;
+		rational_t Br;
 
-			find_sol(q, n1, n2, &br, &Br);
+		find_sol(q, n1, n2, &br, &Br);
+
+		if(r == 1){
+
 
 			if (get_solution(s, q, n2, br, Br))
-						return true;
-					return false;
+				return true;
+			return false;
 		}
 
 		int s_prime = s - n2 + n1*(n2 - n1);
@@ -353,8 +356,8 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 	fclose(afile);
 	fclose(cfile);
 
-	printf("\n\n\n\n------------------\n\n\n\nStarting new test of size %d x %d\n", rows,cols);
-	print_ineq(rows,cols,a,c);
+	//printf("\n\n\n\n------------------\n\n\n\nStarting new test of size %d x %d\n", rows,cols);
+	//print_ineq(rows,cols,a,c);
 
 	if (seconds == 0) {
 		/* Just run once for validation. */
