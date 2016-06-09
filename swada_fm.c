@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
-#include <limits.h>
 #include <alloca.h>
 
+#define INT_MIN	(-2147483648)
+#define INT_MAX (2147483647)
 
 static unsigned long long	fm_count;
 static volatile bool		proceed = false;
