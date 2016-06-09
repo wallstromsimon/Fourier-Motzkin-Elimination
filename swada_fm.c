@@ -101,7 +101,7 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 		}
 	}
 	n2 += n1;
-	
+
 	//sort system according to rightmost coefficient
 	rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
 	rational_t *cs = alloca(cols*sizeof(rational_t));
@@ -171,10 +171,10 @@ void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 			double max_value = -DBL_MAX;
 			rational_t max_rational = (rational_t){1,1};
 			bool max_set = false;
-			for (int j = n1+1; j <= n2; ++j) {
-				if (rtod(q[j-1]) > max_value) {
-					max_value = rtod(q[j-1]);
-					max_rational = q[j-1];
+			for (int j = n1; j < n2; ++j) {
+				if (rtod(q[j]) > max_value) {
+					max_value = rtod(q[j]);
+					max_rational = q[j];
 					max_set = true;
 				}
 			}
@@ -189,10 +189,10 @@ void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 			rational_t min_rational = (rational_t){1,1};
 			bool min_set = false;
 			
-			for (int j = 1; j <= n1; ++j) {
-				if (rtod(q[j-1]) < min_value) {
-					min_value = rtod(q[j-1]);
-					min_rational = q[j-1];
+			for (int j = 0; j < n1; ++j) {
+				if (rtod(q[j]) < min_value) {
+					min_value = rtod(q[j]);
+					min_rational = q[j];
 					min_set = true;
 				}
 			}
@@ -207,8 +207,8 @@ int get_solution(int s, rational_t c[s], int n2, rational_t b, rational_t B)
 	if (rtod(b) > rtod(B))
 		return false;
 
-	for (int j = n2+1; j <= s; ++j)
-		if (rtod(c[j-1]) < 0)
+	for (int j = n2; j < s; ++j)
+		if (rtod(c[j]) < 0)
 			return false;
 	return true;
 }
