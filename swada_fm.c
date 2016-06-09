@@ -17,6 +17,15 @@ struct rational_t{
 	int d;
 };
 
+void* arena = NULL;
+
+void* xalloca(size_t size)
+{
+	void* tmp = arena;
+	arena += size;
+	return tmp;
+}
+
 inline rational_t subd(rational_t r1, rational_t r2)
 {
 	return (rational_t){r1.n*r2.d - r2.n*r1.d, r1.d*r2.d};
@@ -54,8 +63,8 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 	n2 += n1;
 
 	//sort system according to rightmost coefficient
-	rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
-	rational_t *cs = alloca(cols*sizeof(rational_t));
+	rational_t (*As)[cols] = xalloca(rows*cols*sizeof(rational_t));
+	rational_t *cs = xalloca(cols*sizeof(rational_t));
 	
 	int ppos = 0;
 	int npos = n1;
@@ -172,8 +181,8 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 		if (s_prime == 0)
 			return true;
 
-		rational_t (*U)[r-1] = alloca(s_prime * (r-1) * sizeof(rational_t));
-		rational_t *q_next = alloca(s_prime * sizeof(rational_t));
+		rational_t (*U)[r-1] = xalloca(s_prime * (r-1) * sizeof(rational_t));
+		rational_t *q_next = xalloca(s_prime * sizeof(rational_t));
 		int current_row = 0;
 		
 		for (int k = 0; k < n1; k++) {
@@ -219,7 +228,14 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 	if(fscanf(afile,"%d",&rows) != 1 || fscanf(afile,"%d",&cols) != 1){
 		fprintf(stderr, "could not read from file\n");
 	}
-	rational_t (*a)[cols] = alloca(rows*cols*sizeof(rational_t));
+
+	arena = malloc(900000000*sizeof(rational_t));
+	void* first = arena;
+	if(!arena){
+		exit(1);
+	}
+
+	rational_t (*a)[cols] = xalloca(rows*cols*sizeof(rational_t));
 	for(i = 0; i<rows; ++i){
 		for(j = 0; j<cols; ++j){
 			if(fscanf(afile,"%d",&(a[i][j].n)) != 1){
@@ -232,7 +248,7 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 	if(fscanf(cfile,"%d",&c_col) != 1){
 		fprintf(stderr, "could not read from file\n");
 	}
-	rational_t *c = alloca(c_col*sizeof(rational_t));
+	rational_t *c = xalloca(c_col*sizeof(rational_t));
 	for(i = 0; i <c_col;++i){
 		if(fscanf(cfile,"%d",&(c[i].n)) != 1){
 			fprintf(stderr, "could not read from file\n");
@@ -261,6 +277,8 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 		fm_elim(rows, cols, a, c);
 		fm_count++;
 	}
+
+	free(first);
 
 	return fm_count;
 }
