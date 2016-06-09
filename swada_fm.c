@@ -17,13 +17,10 @@ struct rational_t{
 	int d;
 };
 
-void print_rational(rational_t r){
-	printf("%d/%d",r.n ,r.d);
-}
-
 rational_t muld(rational_t,rational_t);
 
-rational_t reduce(rational_t r){
+rational_t reduce(rational_t r)
+{
 	int a=r.n, b=r.d, c;
 	while (a != 0) {
 		c = a;
@@ -39,25 +36,30 @@ rational_t reduce(rational_t r){
 	return r;
 }
 
-rational_t addd(rational_t r1, rational_t r2){
+//skip reduce to significantly lower text size
+rational_t addd(rational_t r1, rational_t r2)
+{
 	rational_t r;
 	r.n = r1.n*r2.d + r2.n*r1.d;
 	r.d = r1.d*r2.d;
 	return reduce(r);
 }
-rational_t subd(rational_t r1, rational_t r2){
+rational_t subd(rational_t r1, rational_t r2)
+{
 	rational_t r;
 	r.n = r1.n*r2.d - r2.n*r1.d;
 	r.d = r1.d*r2.d;
 	return reduce(r);
 }
-rational_t muld(rational_t r1, rational_t r2){
+rational_t muld(rational_t r1, rational_t r2)
+{
 	rational_t r;
 	r.n = r1.n*r2.n;
 	r.d = r1.d*r2.d;
 	return reduce(r);
 }
-rational_t divd(rational_t r1, rational_t r2){
+rational_t divd(rational_t r1, rational_t r2)
+{
 	rational_t r;
 	r.n = r1.n*r2.d;
 	r.d = r1.d*r2.n;
@@ -69,14 +71,16 @@ double rtod(rational_t r1)
 	return (double)r1.n/r1.d;
 }
 
-int lessd(rational_t r1, rational_t r2){
-
+int lessd(rational_t r1, rational_t r2)
+{
 	return rtod(r1) < rtod(r2);
 }
-int greatd(rational_t r1, rational_t r2){
+int greatd(rational_t r1, rational_t r2)
+{
 	return rtod(r1) > rtod(r2);
 }
-int equald(rational_t r1, rational_t r2){
+int equald(rational_t r1, rational_t r2)
+{
 	return rtod(r1) == rtod(r2);
 }
 
@@ -84,20 +88,6 @@ static void done(int unused)
 {
 	proceed = false;
 	unused = unused;
-}
-
-void print_ineq(int n, int m, rational_t matrix[n][m], rational_t v[n])
-{
-	int i, j;
-	for(i = 0; i < n; i++){
-		for(j=0; j < m; j++){
-			print_rational(matrix[i][j]);
-			printf("    ");
-		}
-		printf("<=    ");
-		print_rational(v[i]);
-		printf("\n");
-	}
 }
 
 rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
@@ -115,7 +105,6 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 		}
 	}
 	n2 += n1;
-	//printf("\nn1: %d, n2: %d \n", n1, n2);
 
 	//sort system according to rightmost coefficient
 	rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
@@ -149,25 +138,22 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 			cs[i] = c[smallest_row];
 		}
 	}
-	//printf("\nSorted\n");
 	for (int i = 0; i < rows; ++i){
 		for (int j = 0; j < cols; ++j){
 			A[i][j] = As[i][j];
 		}
 		c[i] = cs[i];
 	}
-	//print_ineq(rows, cols, A, c);
 	return (rational_t){n1,n2};
 }
 
 void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
 {
-	// < should be > when dividing with negative
+
 	rational_t coef;
 	int i,j;
 	for (i = 0; i < rows; i++){
 		coef = A[i][cols-1];
-		//coef.n = coef.n < 0 ? coef.n * -1 : coef.n;
 		if(coef.n != 0){
 			for(j = 0; j < cols; j++){
 				A[i][j] = divd(A[i][j], coef);
@@ -175,8 +161,7 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 			c[i] = divd(c[i], coef);
 		}
 	}
-	//printf("\nDivided\n");
-	//print_ineq(rows, cols, A, c);
+
 }
 
 void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
@@ -238,6 +223,8 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 	int n2;
 	int s = rows;
 	int r = cols;
+	rational_t br;
+	rational_t Br;
 
 	rational_t (*start_matrix)[r] = alloca(s * r * sizeof(rational_t));
 
@@ -249,28 +236,17 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 		q[i] = (rational_t){c[i].n, 1};
 	}
 
-	void *next_matrix_ptr = (void *)start_matrix;
+	void *next_matrix_ptr = (void*)start_matrix;
 
 	while(1){
 		rational_t (*T)[r] = next_matrix_ptr;
-
 		rational_t n = sort_ineq(s,r, T, q);
 		n1 = n.n;
 		n2 = n.d;
-
 		divide_by_coef(n2,r, T, q);
 
-		n1 = n.n;
-		n2 = n.d;
-
-		rational_t br;
-		rational_t Br;
-
-		find_sol(q, n1, n2, &br, &Br);
-
 		if(r == 1){
-
-
+			find_sol(q, n1, n2, &br, &Br);
 			if (get_solution(s, q, n2, br, Br))
 				return true;
 			return false;
@@ -331,7 +307,7 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 	if(fscanf(afile,"%d",&rows) != 1 || fscanf(afile,"%d",&cols) != 1){
 		fprintf(stderr, "could not read from file\n");
 	}
-	rational_t a[rows][cols];
+	rational_t (*a)[cols] = alloca(rows*cols*sizeof(rational_t));
 	for(i = 0; i<rows; ++i){
 		for(j = 0; j<cols; ++j){
 			if(fscanf(afile,"%d",&(a[i][j].n)) != 1){
@@ -344,7 +320,7 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 	if(fscanf(cfile,"%d",&c_col) != 1){
 		fprintf(stderr, "could not read from file\n");
 	}
-	rational_t c[c_col];
+	rational_t *c = alloca(c_col*sizeof(rational_t));
 	for(i = 0; i <c_col;++i){
 		if(fscanf(cfile,"%d",&(c[i].n)) != 1){
 			fprintf(stderr, "could not read from file\n");
@@ -355,10 +331,6 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 
 	fclose(afile);
 	fclose(cfile);
-
-	//printf("\n\n\n\n------------------\n\n\n\nStarting new test of size %d x %d\n", rows,cols);
-	//print_ineq(rows,cols,a,c);
-
 	if (seconds == 0) {
 		/* Just run once for validation. */
 
