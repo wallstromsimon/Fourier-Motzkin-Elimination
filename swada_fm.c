@@ -145,7 +145,6 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 
 void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[rows] )
 {
-
 	rational_t coef;
 	int i,j;
 	for (i = 0; i < rows; i++){
@@ -157,53 +156,36 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 			c[i] = divd(c[i], coef);
 		}
 	}
-
 }
 
 void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 {
-	
+	*br = (rational_t){INT_MIN, 1};
+	*Br = (rational_t){INT_MAX, 1};
 
-		*br = (rational_t){INT_MIN, 1};
-		*Br = (rational_t){INT_MAX, 1};
-
-		if (n2 > n1) {
-			double max_value = -DBL_MAX;
-			rational_t max_rational = (rational_t){1,1};
-			bool max_set = false;
-			for (int j = n1; j < n2; ++j) {
-				if (rtod(q[j]) > max_value) {
-					max_value = rtod(q[j]);
-					max_rational = q[j];
-					max_set = true;
-				}
+	if (n2 > n1) {
+		double max_value = -DBL_MAX;
+		for (int j = n1; j < n2; ++j) {
+			if (rtod(q[j]) > max_value) {
+				max_value = rtod(q[j]);
+				*br = q[j];
 			}
-			if (max_set)
-				*br = max_rational;
 		}
+	}
 
-		
-		if (n1 > 0) {
-
-			double min_value = DBL_MAX;
-			rational_t min_rational = (rational_t){1,1};
-			bool min_set = false;
-			
-			for (int j = 0; j < n1; ++j) {
-				if (rtod(q[j]) < min_value) {
-					min_value = rtod(q[j]);
-					min_rational = q[j];
-					min_set = true;
-				}
+	if (n1 > 0) {
+		double min_value = DBL_MAX;
+		for (int j = 0; j < n1; ++j) {
+			if (rtod(q[j]) < min_value) {
+				min_value = rtod(q[j]);
+				*Br = q[j];
 			}
-			if (min_set)
-				*Br = min_rational;
 		}
+	}
 }
 
 int get_solution(int s, rational_t c[s], int n2, rational_t b, rational_t B) 
 {
-
 	if (rtod(b) > rtod(B))
 		return false;
 
@@ -222,7 +204,6 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 	rational_t br;
 	rational_t Br;
 
-
 	rational_t *q = c;
 	void *next_matrix_ptr = a;
 
@@ -235,9 +216,7 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 
 		if(r == 1){
 			find_sol(q, n1, n2, &br, &Br);
-			if (get_solution(s, q, n2, br, Br))
-				return true;
-			return false;
+			return get_solution(s, q, n2, br, Br);
 		}
 
 		int s_prime = s - n2 + n1*(n2 - n1);
@@ -246,8 +225,6 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 
 		rational_t (*U)[r-1] = alloca(s_prime * (r-1) * sizeof(rational_t));
 		rational_t *q_next = alloca(s_prime * sizeof(rational_t));
-		
-
 		int current_row = 0;
 		
 		for (int k = 1; k <= n1; k++) {
@@ -255,15 +232,13 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 				for (int i = 1; i < r; i++) {
 					U[current_row][i-1] = subd(T[k-1][i-1], T[l-1][i-1]);
 				}
-				q_next[current_row] = subd(q[k-1], q[l-1]);
-				current_row++;
+				q_next[current_row++] = subd(q[k-1], q[l-1]);
 			}
 		}
 
 		for (int j = n2 + 1; j <= s; j++) {
 			for (int i = 1; i < r; i++) {
 				U[current_row][i-1] = T[j-1][i-1];
-				
 			}
 			q_next[current_row++] = q[j-1];
 		}
@@ -324,7 +299,6 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 
 		// Uncomment when your function and variables exist...
 		return fm_elim(rows, cols, a, c);
-		// return 1; // return one, i.e. has a solution for now...
 	}
 
 	/* Tell operating system to call function DONE when an ALARM comes. */
@@ -336,7 +310,6 @@ unsigned long long swada_fm(char* aname, char* cname, int seconds)
 	while (proceed) {
 		// Uncomment when your function and variables exist...
 		fm_elim(rows, cols, a, c);
-
 		fm_count++;
 	}
 
