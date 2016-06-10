@@ -4,8 +4,9 @@
 #include <signal.h>
 #include <unistd.h>
 #include <alloca.h>
+#include <string.h>
 
-#define INT_MIN	(-2147483648)
+#define INT_MIN (-2147483648)
 #define INT_MAX (2147483647)
 
 static unsigned long long	fm_count;
@@ -37,7 +38,7 @@ static void done(int unused)
 	unused = unused;
 }
 
-rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows])
+rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[rows], rational_t As[rows][cols], rational_t cs[rows])
 {
 	//count positive and negativ
 	int n1 = 0; //#positive
@@ -54,8 +55,8 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 	n2 += n1;
 
 	//sort system according to rightmost coefficient
-	rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
-	rational_t *cs = alloca(cols*sizeof(rational_t));
+	//rational_t (*As)[cols] = alloca(rows*cols*sizeof(rational_t));
+	//rational_t *cs = alloca(cols*sizeof(rational_t));
 	
 	int ppos = 0;
 	int npos = n1;
@@ -83,12 +84,14 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 		}
 	}
 
-	for (int i = 0; i < rows; ++i){
+
+
+/*	for (int i = 0; i < rows; ++i){
 		for (int j = 0; j < cols; ++j){
 			A[i][j] = As[i][j];
 		}
 		c[i] = cs[i];
-	}
+	}*/
 	return (rational_t){n1,n2};
 }
 
@@ -153,12 +156,31 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 	rational_t br;
 	rational_t Br;
 
-	rational_t *q = c;
-	void *next_matrix_ptr = a;
+	//rational_t *q = c;
+	//void *next_matrix_ptr = a;
+
+	rational_t (*start_matrix)[r] = alloca(s * r * sizeof(rational_t));
+	rational_t *q = alloca(s * sizeof(rational_t));
+
+	//memcpy(*start_matrix, a, s * r * sizeof(rational_t));
+	//memcpy(q, c, s * sizeof(rational_t));
+	void *next_matrix_ptr = (void *)start_matrix;
+
+	int first = 1;
 
 	while(1){
 		rational_t (*T)[r] = next_matrix_ptr;
-		rational_t n = sort_ineq(s,r, T, q);
+		rational_t n;
+		if(first){
+			n = sort_ineq(s,r, a,c,T, q); //init matrix
+			first = 0;
+		}else{
+			rational_t (*As)[r] = alloca(s*r*sizeof(rational_t));
+			rational_t *cs = alloca(r*sizeof(rational_t));
+			n = sort_ineq(s,r,T,q,As,cs);
+			memcpy(*T, As, s*r*sizeof(rational_t));
+			memcpy(q, cs, s*sizeof(rational_t));
+		}
 		n1 = n.n;
 		n2 = n.d;
 		divide_by_coef(n2,r, T, q);
