@@ -83,7 +83,6 @@ rational_t sort_ineq(int rows, int cols, rational_t A[rows][cols], rational_t c[
 
 	memcpy(*A, As, rows*cols*sizeof(rational_t));
 	memcpy(c, cs, rows*sizeof(rational_t));
-
 	return (rational_t){n1,n2};
 }
 
@@ -102,7 +101,7 @@ void divide_by_coef(int rows, int cols, rational_t A[rows][cols], rational_t c[r
 	}
 }
 
-void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
+int get_solution(int rows, rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 {
 	*br = (rational_t){-INT_MAX, 1};
 	*Br = (rational_t){INT_MAX, 1};
@@ -126,31 +125,21 @@ void find_sol(rational_t* q, int n1, int n2, rational_t* br, rational_t* Br)
 			}
 		}
 	}
-}
 
-int get_solution(int s, rational_t c[s], int n2, rational_t b, rational_t B) 
-{
-	if (rtod(b) > rtod(B))
+	if(rtod(*br) > rtod(*Br))
 		return false;
-
-	for (int j = n2; j < s; ++j)
-		if (rtod(c[j]) < 0)
+	for(int j = n2; j < rows; ++j)
+		if(rtod(q[j]) < 0)
 			return false;
 	return true;
 }
 
 int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 {
-	int n1;
-	int n2;
+	int n1, n2;
 	int s = rows;
 	int r = cols;
-	rational_t br;
-	rational_t Br;
-
-	//rational_t *q = c;
-	//void *next_matrix_ptr = a;
-
+	rational_t br, Br;
 	rational_t (*start_matrix)[r] = alloca(s * r * sizeof(rational_t));
 	rational_t *q = alloca(s * sizeof(rational_t));
 	memcpy(*start_matrix, a, s * r * sizeof(rational_t));
@@ -165,8 +154,7 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 		divide_by_coef(n2,r, T, q);
 
 		if(r == 1){
-			find_sol(q, n1, n2, &br, &Br);
-			return get_solution(s, q, n2, br, Br);
+			return get_solution(s,q, n1, n2, &br, &Br);
 		}
 
 		int s_prime = s - n2 + n1*(n2 - n1);
