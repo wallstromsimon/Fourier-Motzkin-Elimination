@@ -153,9 +153,8 @@ int fm_elim(int rows, int cols, rational_t a[rows][cols], rational_t c[rows])
 		n2 = n.d;
 		divide_by_coef(n2,r, T, q);
 
-		if(r == 1){
+		if(r == 1)
 			return get_solution(s,q, n1, n2, &br, &Br);
-		}
 
 		int s_prime = s - n2 + n1*(n2 - n1);
 		if (s_prime == 0)
